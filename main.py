@@ -1,5 +1,6 @@
 from pca_impl import *
 
+
 if __name__ == '__main__':
 
     pca = int(input("Type in the number of dominating principal components: "))
@@ -14,7 +15,8 @@ if __name__ == '__main__':
     transform_matrix = transform_images(eigenfaces[:, :pca], normal_data)
 
     # identify the person
-    tr_img = transform_single_image(input_image, eigenfaces, m)
+    tr_img = transform_single_image(input_image, eigenfaces[:, :pca], m)
+    show_projected_face(tr_img, eigenfaces, pca, m)
     name = identify_face(tr_img, transform_matrix, name_list)
 
     print("This is a photo of " + name + "!")

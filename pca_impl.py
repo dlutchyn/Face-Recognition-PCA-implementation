@@ -13,14 +13,10 @@ def create_matrix_dataset(filepath):
                 # resize image to convenient shape
                 basewidth = 64
                 img = Image.open(os.path.join(root, file))
+                img = img.convert('L')
                 wpercent = (basewidth / float(img.size[0]))
-                # hsize = int((float(img.size[1]) * float(wpercent)))
                 hsize = 77
-                print(img.size)
                 img = img.resize((basewidth, hsize), Image.ANTIALIAS)
-                print(os.path.join(root, file))
-                print(img.size)
-                print('----')
 
                 numpy_data = np.asarray(img).reshape([1, 4928])
                 dataset = np.vstack([dataset, numpy_data])
@@ -61,8 +57,9 @@ def transform_single_image(filepath, eigenfaces, mean):
     # open and resize image
     basewidth = 64
     img = Image.open(filepath)
+    img = img.convert('L')
     wpercent = (basewidth / float(img.size[0]))
-    hsize = int((float(img.size[1]) * float(wpercent)))
+    hsize = 77
     img = img.resize((basewidth, hsize), Image.ANTIALIAS)
 
     numpy_data = np.asarray(img).reshape([1, 4928])
@@ -75,9 +72,20 @@ def transform_single_image(filepath, eigenfaces, mean):
 def identify_face(tr_image, tr_matrix, name_list):
     min_dist = numpy.inf
     for i in range(tr_matrix.shape[0]):
-        # dist = spatial.distance.cdist(tr_image, tr_matrix[i], metric='euclidean')
         dist = numpy.linalg.norm(tr_image - tr_matrix[i])
         if dist < min_dist:
             min_dist = dist
             name = name_list[i]
-    return name
+    return ' '.join(name.split('_'))
+
+
+def show_projected_face(tr_image, eigenfaces, pca, mean):
+    new_face = np.empty([1, 4928])
+    for i in range(len(tr_image)):
+        new_face += tr_image[i, 0] * eigenfaces[:, i]
+
+    new_face += mean
+    new_face = new_face.reshape([77, 64])
+    image = Image.fromarray(new_face)
+    image.show()
+

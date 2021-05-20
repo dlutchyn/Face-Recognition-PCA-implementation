@@ -52,22 +52,23 @@ if __name__ == '__main__':
     normal_data, m = normalize_data(dataset)
     cov_matrix = create_covariance_matrix(normal_data)
     eigenfaces = create_eigenfaces(cov_matrix)
-    transform_matrix = transform_images(eigenfaces[:, :64], normal_data)
+    transform_matrix = transform_images(eigenfaces[:, :32], normal_data)
     show_eigenfaces(eigenfaces)
 
 # test single image -----------------------------------
-    tr_img = transform_single_image('dataset/test/s12/10.pgm', eigenfaces, m)
+    tr_img = transform_single_image('dataset/train/Yurii_Vipshovskyi/1.jpg', eigenfaces[:, :32], m)
     name = identify_face(tr_img, transform_matrix, name_list)
+    show_projected_face(tr_img, eigenfaces, 32, m)
     print(name)
 
-# test on test directory with fixed number of dominating principal components
-    pca = 64
-    filepath2 = "dataset/test"
-    transform_matrix = transform_images(eigenfaces[:, :pca], normal_data)
-    res = test(filepath2, transform_matrix, eigenfaces[:, :pca], m, name_list)
-    print(res)
-
+# # test on test directory with fixed number of dominating principal components
+#     pca = 64
+#     filepath2 = "dataset/test"
+#     transform_matrix = transform_images(eigenfaces[:, :pca], normal_data)
+#     res = test(filepath2, transform_matrix, eigenfaces[:, :pca], m, name_list)
+#     print(res)
+#
 # test on directory with multiple numbers of dominating principal components
-    principal_comp = [6, 12, 20, 32, 45, 64, 100]
-    filepath2 = "dataset/test"
-    multi_test(filepath2, eigenfaces, m, name_list, principal_comp)
+#     principal_comp = [6, 12, 20, 32, 45, 50]
+#     filepath2 = "dataset/test"
+#     multi_test(filepath2, eigenfaces, m, name_list, principal_comp)
